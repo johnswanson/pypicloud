@@ -48,6 +48,8 @@ class S3Storage(IStorage):
                                  'aws.access_key', None)
         secret_key = getdefaults(settings, 'storage.secret_key',
                                  'aws.secret_key', None)
+        host       = getdefaults(settings, 'storage.host',
+                                 'aws.host', None)
 
         # We used to always use boto.connect_s3 because it can look up buckets
         # in any region. New regions require AWS4-HMAC-SHA256, which boto can
@@ -58,11 +60,13 @@ class S3Storage(IStorage):
         if location is None:
             s3conn = boto.connect_s3(
                 aws_access_key_id=access_key,
-                aws_secret_access_key=secret_key)
+                aws_secret_access_key=secret_key,
+                host=host)
         else:
             s3conn = boto.s3.connect_to_region(location,
                                                aws_access_key_id=access_key,
-                                               aws_secret_access_key=secret_key)
+                                               aws_secret_access_key=secret_key,
+                                               host=host)
         aws_bucket = getdefaults(settings, 'storage.bucket', 'aws.bucket',
                                  None)
         if aws_bucket is None:
